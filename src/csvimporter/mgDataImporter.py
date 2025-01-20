@@ -3,13 +3,14 @@ import requests
 
 from .model import Segmentation, AttractionType, MoreInfoLink, Attraction
 from utils.mapper import CsvObjectMapper
+from configuration import ENDPOINTS
 
 class MGDataImporter:
     def __init__(self):
         pass
 
     def login(self, email:str, password:str) -> str:
-        url = "http://localhost:8080/api/auth/authenticate"
+        url = ENDPOINTS.api_url + ENDPOINTS.auth
         headers = {"Content-Type": "application/json"}
         body = {
             "email": email,
@@ -56,7 +57,7 @@ class MGDataImporter:
         return attractions
 
     def post_attraction(self, attraction:Attraction, jwt:str) -> Attraction:
-        url = "http://localhost:8080/api/tourists/create"
+        url = ENDPOINTS.api_url + ENDPOINTS.create_attraction
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {jwt}"
@@ -96,10 +97,11 @@ class MGDataImporter:
 
     def _post_segmentation(self, segmentation:Segmentation, jwt:str) -> str:
         if self._exist(segmentation):
-            id:str = requests.get("http://localhost:8080/api/segmentations/search?name=" + segmentation.name, headers={"Authorization": "Bearer " + jwt}).json()[0]["id"]
+            id:str = requests.get(f"{ENDPOINTS.api_url}{ENDPOINTS.segmentations}/search?name={segmentation.name}",
+                                  headers={"Authorization": "Bearer " + jwt}).json()[0]["id"]
             return id
 
-        url = "http://localhost:8080/api/segmentations"
+        url = ENDPOINTS.api_url + ENDPOINTS.segmentations
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {jwt}"
@@ -115,7 +117,7 @@ class MGDataImporter:
 
 
     def _post_info_link(self, info_link:MoreInfoLink, jwt:str) -> str:
-        url = "http://localhost:8080/api/more-info"
+        url = ENDPOINTS.api_url + ENDPOINTS.more_info_links
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {jwt}"
@@ -131,10 +133,11 @@ class MGDataImporter:
 
     def _post_attraction_type(self, attraction_type:AttractionType, jwt:str) -> str:
         if self._exist(attraction_type):
-            id:str = requests.get("http://localhost:8080/api/types/search?name=" + attraction_type.name, headers={"Authorization": "Bearer " + jwt}).json()[0]["id"]
+            id:str = requests.get(f"{ENDPOINTS.api_url}{ENDPOINTS.attraction_type}/search?name={attraction_type.name}",
+                                  headers={"Authorization": "Bearer " + jwt}).json()[0]["id"]
             return id
 
-        url = "http://localhost:8080/api/types"
+        url = ENDPOINTS.api_url + ENDPOINTS.attraction_type
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {jwt}"
@@ -150,9 +153,12 @@ class MGDataImporter:
     
     def _exist(self, resource:any) -> bool:
         if isinstance(resource, Segmentation):
-            url = f"http://localhost:8080/api/segmentations/search?name={resource.name}"
+            url = f"{ENDPOINTS.api_url}{ENDPOINTS.segmentations}/search?name={resource.name}"
         elif isinstance(resource, AttractionType):
-            url = f"http://localhost:8080/api/types/search?name={resource.name}"
+            url = f"{ENDPOINTS.api_url}{ENDPOINTS.attraction_type}/search?name={resource.name}"
+        else:
+            return False
         
         response = requests.get(url)
+        print("Response status code:", response.status_code)
         return len(response.json()) > 0
