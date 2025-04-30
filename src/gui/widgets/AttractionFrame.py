@@ -35,7 +35,7 @@ class AttractionFrame(ctk.CTkFrame):
         self.attraction_status_toplevel.rowconfigure(1, weight=1)
 
 
-        attraction_name_label = ctk.CTkLabel(self.attraction_status_toplevel, text=attraction.name, wraplength=30, justify='center', font=('Arial', 14, 'bold'))
+        attraction_name_label = ctk.CTkLabel(self.attraction_status_toplevel, text=attraction.name, wraplength=360, justify='center', font=('Arial', 14, 'bold'))
         attraction_name_label.grid(row=0, column=0, pady=PADDING_SMALL, padx=PADDING_SMALL, stick='nsew')
 
         attraction_status_text = ctk.CTkLabel(self.attraction_status_toplevel, text=attraction.import_status, wraplength=360, justify='left')

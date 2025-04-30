@@ -3,13 +3,14 @@ import os
 import configparser
 
 @dataclass
-class ENDPOINTS:
+class Endpoints:
     api_url: str
     auth: str
     create_attraction: str
     segmentations: str
     more_info_links: str
     attraction_type: str
+    cities:str
 
 class ConfigReader:
     _instance = None
@@ -36,13 +37,14 @@ class ConfigReader:
 
         self.validate_config_file(self.config_parser)
 
-        self.endpoints = ENDPOINTS(
+        self.endpoints = Endpoints(
             self.config_parser['endpoints']['api'],
             self.config_parser['endpoints']['auth'],
             self.config_parser['endpoints']['create_attraction'],
             self.config_parser['endpoints']['segmentations'],
             self.config_parser['endpoints']['more_info_links'],
-            self.config_parser['endpoints']['attraction_type']
+            self.config_parser['endpoints']['attraction_type'],
+            self.config_parser['endpoints']['cities']
         )
         
     def _base_config(self) -> configparser.ConfigParser:
@@ -53,12 +55,14 @@ class ConfigReader:
             'create_attraction': '/tourists/create',
             'segmentations': '/segmentations',
             'more_info_links': '/more-info',
-            'attraction_type': '/types'
+            'attraction_type': '/types',
+            'cities': '/cities'
         }
         return base_config
 
     def create_config(self):
         base_config = self._base_config()
+        os.makedirs("settings", exist_ok=True)
         with open(self.config_path, 'w') as configfile:
             base_config.write(configfile)
         print("created")

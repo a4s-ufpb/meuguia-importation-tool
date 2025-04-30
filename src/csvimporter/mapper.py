@@ -1,4 +1,4 @@
-from csvimporter.model import Segmentation, AttractionType, MoreInfoLink
+from .model import Segmentation, AttractionType, MoreInfoLink
 
 class CsvObjectMapper:
 

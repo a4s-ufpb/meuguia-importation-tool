@@ -2,3 +2,5 @@
 .venv/
 *.csv
 *.pyc
+*.ini
+.vscode/
